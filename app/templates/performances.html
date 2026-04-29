@@ -1,0 +1,440 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-heading">
+    <a href="{{url_for('model_performance_page')}}"><i class="bi bi-chevron-left"></i></a>
+      <div>
+        <p></p>
+      </div>
+      <h3><code>{{id}}</code> Performance</h3>
+      <p class="text-subtitle text-muted">
+        <i>Confussion Matrix, F1, Recall, Accuracy, Precision score.</i>
+      </p>
+    <div class="page-content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Confussion Matrixes</h4>
+                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <img src="{{url_for('static', filename=train_png_cf_path)}}">
+                             </div>
+                            <div class="col-6">
+                                <img src="{{url_for('static', filename=validation_png_cf_path)}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Total Data</h4>
+                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="total-data"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">K(5)-fold Validation</h4>
+                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="kfold"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Recalls</h4>
+                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="recall"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Precision</h4>
+                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="precision"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Accuracy</h4>
+                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="acc"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">F1 Score</h4>
+                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="f1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{url_for('static', filename='assets/extensions/apexcharts/apexcharts.js')}}"></script>
+
+<!-- for accuracy -->
+<script>
+    var options = {
+        series: [{
+        name: 'Training',
+        data: [{{performance_data['train']['accuracy']}}]
+      }, {
+        name: 'Validation',
+        data: [{{performance_data['validation']['accuracy']}}]
+      }],
+        chart: {
+        type: 'bar',
+        height: 350
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          endingShape: 'rounded'
+        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: ['{{id}}'],
+      },
+      yaxis: {
+        title: {
+          text: '100%)'
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return val + "%"
+          }
+        }
+      }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#acc"), options);
+      chart.render();
+</script>
+
+<!-- for f1 -->
+<script>
+    var options = {
+        series: [{
+        name: 'Training',
+        data: [{{performance_data['train']['f1']}}]
+      }, {
+        name: 'Validation',
+        data: [{{performance_data['validation']['f1']}}]
+      }],
+        chart: {
+        type: 'bar',
+        height: 350
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          endingShape: 'rounded'
+        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: ['{{id}}'],
+      },
+      yaxis: {
+        title: {
+          text: '100%)'
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return val + "%"
+          }
+        }
+      }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#f1"), options);
+      chart.render();
+</script>
+
+<!-- for precision -->
+<script>
+    var options = {
+        series: [{
+        name: 'Training',
+        data: [{{performance_data['train']['precision']}}]
+      }, {
+        name: 'Validation',
+        data: [{{performance_data['validation']['precision']}}]
+      }],
+        chart: {
+        type: 'bar',
+        height: 350
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          endingShape: 'rounded'
+        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: ['{{id}}'],
+      },
+      yaxis: {
+        title: {
+          text: '100%)'
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return val + "%"
+          }
+        }
+      }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#precision"), options);
+      chart.render();
+</script>
+
+<!-- for recall -->
+<script>
+    var options = {
+        series: [{
+        name: 'Training',
+        data: [{{performance_data['train']['recal']}}]
+      }, {
+        name: 'Validation',
+        data: [{{performance_data['validation']['recal']}}]
+      }],
+        chart: {
+        type: 'bar',
+        height: 350
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          endingShape: 'rounded'
+        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: ['{{id}}'],
+      },
+      yaxis: {
+        title: {
+          text: '100%)'
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return val + "%"
+          }
+        }
+      }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#recall"), options);
+      chart.render();
+</script>
+
+<!-- for total_data -->
+<script>
+    var options = {
+        series: [{
+        name: 'Training',
+        data: [{{performance_data['train']['total_data']}}]
+      }, {
+        name: 'Validation',
+        data: [{{performance_data['validation']['total_data']}}]
+      }],
+        chart: {
+        type: 'bar',
+        height: 350
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          endingShape: 'rounded'
+        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: ['{{id}}'],
+      },
+      yaxis: {
+        title: {
+          text: '100%)'
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return val + " data"
+          }
+        }
+      }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#total-data"), options);
+      chart.render();
+</script>
+
+<!-- for kfold -->
+<script>
+    var options = {
+        series: [{
+        name: '1st fold',
+        data: [{{performance_data['train']['cross_val'][0]}}]
+        }, {
+        name: '2nd fold',
+        data: [{{performance_data['train']['cross_val'][1]}}]
+        }, {
+        name: '3rd fold',
+        data: [{{performance_data['train']['cross_val'][2]}}]
+        }, {
+        name: '4th fold',
+        data: [{{performance_data['train']['cross_val'][3]}}]
+        }, {
+        name: '5th fold',
+        data: [{{performance_data['train']['cross_val'][4]}}]
+        },
+        ],
+        chart: {
+        type: 'bar',
+        height: 350
+        },
+        plotOptions: {
+        bar: {
+            horizontal: false,
+            columnWidth: '55%',
+            endingShape: 'rounded'
+        },
+        },
+        dataLabels: {
+        enabled: false
+        },
+        stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+        },
+        xaxis: {
+        categories: ['{{id}}'],
+        },
+        yaxis: {
+        title: {
+            text: '100%)'
+        }
+        },
+        fill: {
+        opacity: 1
+        },
+        tooltip: {
+        y: {
+            formatter: function (val) {
+            return val + "%"
+            }
+        }
+        }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#kfold"), options);
+        chart.render();
+</script>
+{% endblock %} 

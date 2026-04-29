@@ -1,0 +1,7 @@
+__pycache__
+app/static/assets/*/
+app/static/models/*/
+app/static/*.html
+app/static/*.json
+app/.env
+dataset/*

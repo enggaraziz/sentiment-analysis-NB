@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-heading">
+    <a href="{{url_for('sentiment_analysis_page')}}"><i class="bi bi-chevron-left"></i></a>
+        <div>
+            <p></p>
+        </div>
+      <h3>Tweet Insight</h3>
+      <p class="text-subtitle text-muted">
+        <i>Result of sentiment analysis of <code>{{id}}</code> file</i>
+      </p>
+  <div class="page-content">
+    <section class="row">
+      <div class="col-12 col-lg-9">
+        <div class="row">
+          <div class="col-6 col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body px-4 py-4-5">
+                <div class="row">
+                  <div
+                    class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start"
+                  >
+                    <div class="stats-icon purple mb-2">
+                      <i class="iconly-boldCalendar"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                    <h6 class="text-muted font-semibold">
+                      Date Range
+                    </h6>
+                    <h6 class="font-extrabold mb-0">{{insight_data['min_date']}}</h6>
+                    <h6 class="font-extrabold mb-0">{{insight_data['max_date']}}</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body px-4 py-4-5">
+                <div class="row">
+                  <div
+                    class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start"
+                  >
+                    <div class="stats-icon blue mb-2">
+                      <i class="iconly-boldDiscovery"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                    <h6 class="text-muted font-semibold">Total Data</h6>
+                    <h6 class="font-extrabold mb-0">{{insight_data['total_data']}}</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body px-4 py-4-5">
+                <div class="row">
+                  <div
+                    class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start"
+                  >
+                    <div class="stats-icon red mb-2">
+                      <i class="iconly-boldChat"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                    <h6 class="text-muted font-semibold">Total negative sentiments</h6>
+                    <h6 class="font-extrabold mb-0">{{insight_data['total_neg']}}</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body px-4 py-4-5">
+                <div class="row">
+                  <div
+                    class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start"
+                  >
+                    <div class="stats-icon green mb-2">
+                      <i class="iconly-boldChat"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                    <h6 class="text-muted font-semibold">Total positive sentiment</h6>
+                    <h6 class="font-extrabold mb-0">{{insight_data['total_pos']}}</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h4>Tweet Distribution</h4>
+              </div>
+              <div class="card-body">
+                <div id="tweet-series"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4>Tweet Data</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                          <thead>
+                            <tr>
+                              {% for col in col_name %}
+                              <th>{{col}}</th>
+                              {% endfor %}
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for row in row_data %}
+                            <tr>
+                              {% for col, row_ in zip(col_name, row) %}
+                              {% if row_ == 'positive' %}
+                                <td><p style="color:#38c74b;"><b>Positive</b></p></td>
+                              {% elif row_ == 'negative' %}
+                              <td><p style="color:#e84723;"><b>Negative</b></p></td>
+                              {% else %}
+                                <td>{{row_}}</td>
+                              {% endif %}
+                              
+                              {% endfor %}
+                              <td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="col-12 col-lg-3">
+        <div class="card">
+          <div class="card-header">
+            <h4>Average Model Probability Value</h4>
+          </div>
+          <div id="proba">
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{url_for('static', filename='assets/extensions/apexcharts/apexcharts.js')}}"></script>
+
+<!-- Probability value -->
+<script>
+    var options = {
+        series: [{
+        name: 'Negative',
+        data: [{{insight_data['average_prob_neg']}}],
+      }, {
+        name: 'Positive',
+        data: [{{insight_data['average_prob_pos']}}]
+      }],
+        chart: {
+        type: 'bar',
+        height: 350
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          endingShape: 'rounded'
+        },
+      },
+      colors:
+        [
+        "#e84723",
+        "#38c74b"
+        ]
+      ,
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: ['Avg probability'],
+      },
+      yaxis: {
+        title: {
+          text: 'Percentage %'
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return val + "%"
+          }
+        }
+      }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#proba"), options);
+      chart.render();
+</script>
+
+<!-- For tweet series -->
+<script> 
+    var options = {
+    series: [{
+    name: 'Tweet Positive',
+    data: {{insight_data['tweet_series']['positive']}}
+  }, {
+    name: 'Tweet Negative',
+    data: {{insight_data['tweet_series']['negative']}}
+  }],
+    chart: {
+    height: 350,
+    type: 'area'
+  },
+  dataLabels: {
+    enabled: false
+  },
+  colors:
+  [
+  "#38c74b",
+  "#e84723"
+  ]
+,
+  stroke: {
+    curve: 'smooth'
+  },
+  xaxis: {
+    type: 'date',
+    categories: {{insight_data['dates'] | safe }}
+  },
+  tooltip: {
+    x: {
+      format: 'dd/MM/yy'
+    },
+  },
+  };
+
+  var chart = new ApexCharts(document.querySelector("#tweet-series"), options);
+  chart.render();
+</script>
+{% endblock %} 

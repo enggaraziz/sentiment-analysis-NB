@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-heading">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>Sentiment Analysis from Twitter</h3>
+                <p class="text-subtitle text-muted">
+                    Set keyword to start analyzing tweet sentiment.
+                </p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            Sentiment-Analysis
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Set keywords and total data</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <form id="analyze-tweet-form" action="/analyze-tweet" enctype="multipart/form-data"
+                                method="post">
+                                <div class="form-group position-relative has-icon-left mb-4">
+                                    <input type="text" class="form-control form-control-xl"
+                                        placeholder="Keyword, example: indihome, indihome kencang" name="keywords"
+                                        id="keywords" required>
+                                    <div class="form-control-icon">
+                                        <i class="bi bi-twitter"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group position-relative has-icon-left mb-4">
+                                    <input type="number" step="1" max="100" min="10"
+                                        class="form-control form-control-xl"
+                                        placeholder="Total tweet data (Max 100 tweet each analysis)" name="total-data"
+                                        id="ratio" required>
+                                    <div class="form-control-icon">
+                                        <i class="bi bi-at"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6>Model</h6>
+                                    <p>
+                                        Choose available trained <code>model</code> that you want to use to analyze the
+                                        tweet
+                                    </p>
+                                    <div class="form-group">
+                                        <select class="choices form-select" id="tweet-types" name="model-name">
+                                            {% for model in list_models %}
+                                            <option value="{{model}}">{{model}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6>Choose tweet type</h6>
+                                    <div class="form-group">
+                                        <select class="choices form-select" id="tweet-types" name="tweet-types">
+                                            <option value="recent">Recent tweets</option>
+                                            <option value="popular">Popular tweets</option>
+                                            <option value="mixed">Mixed (Popular+Recent) tweets</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h6>Choose tweet filters</h6>
+                                    <div class="form-group">
+                                        <select class="choices form-select multiple-remove" multiple="multiple"
+                                            id="tweet-filter" name="tweet-filters">
+                                            <option value="hashtags">Hashtags(#)</option>
+                                            <option value="retweets">Retweets(RT)</option>
+                                            <option value="links">Links(url)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                                        name="exclude-mode" />
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">Activate exclude mode
+                                        for filters</label>
+                                </div>
+
+                                <div class="col-sm-12 d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary me-1 mb-1">
+                                        Submit
+                                    </button>
+                                    <button type="reset" class="btn btn-light-secondary me-1 mb-1">
+                                        Reset
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal fade text-left" id="success" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel120" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-success">
+                                        <h5 class="modal-title white" id="myModalLabel120">
+                                            Analyze tweet successfully submitted!
+                                        </h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        You can now look the insight of the analysis on Sentiment Analysis page.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a class="btn btn-outline-success" href={{ url_for('sentiment_analysis_page')
+                                            }}>
+                                            Okay
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade text-left" id="danger" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel120" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-danger">
+                                        <h5 class="modal-title white" id="myModalLabel120">
+                                            Ooops, some error occurred!
+                                        </h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p id="error-output"></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger ml-2"
+                                            onClick="window.location.reload();">
+                                            <i class="bx bx-check d-block d-sm-none"></i>
+                                            <span class="d-none d-sm-block">
+                                                Retry
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+{% if tweet_doc_exist %}
+    {% include "tweet-docs.html" %}
+{% endif %}
+</div>
+{% endblock %}
+
+
+
+<!-- //trigger when form is submitted -->
+{% block scripts %}
+<script src="{{url_for('static', filename='assets/extensions/choices.js/public/assets/scripts/choices.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/pages/form-element-select.js')}}"></script>
+<script>
+    $('#analyze-tweet-form').on('submit', function (e) {
+        e.preventDefault();
+        var formData = new FormData(this)
+        $.ajax({
+            url: '/analyze-tweet',
+            type: 'POST',
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: "text",
+            data: formData,
+            success: function (data) {
+                $("#success").modal('show')
+            }.bind(this),
+            error: function (data) {
+                $("#error-output").text(data.responseText)
+                $("#danger").modal('show')
+            }.bind(this)
+        });
+    });
+</script>
+{% endblock %}

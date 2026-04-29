@@ -1,0 +1,7 @@
+keywords,filters,filter_exclude_mode,created_at,model_analyzer,filename,total_tweets,status
+indihomecare,"links, hashtags, retweets",On,2023-01-14 23:50:27,test-model-1_114234220,tweet_indihomecare_test-model-1_114234220_2038_100.csv,100,Finished
+indihome lemot,"hashtags, links, retweets",On,2023-01-14 23:59:02,test-model-1_114234220,tweet_indihome lemot_test-model-1_114234220_2038_84.csv,100,Finished
+indihome parah filter:safe,"links, hashtags, retweets",On,2023-01-15 00:04:25,test-model-1_114234220,tweet_indihome parah filter:safe_test-model-1_114234220_2039_29.csv,24,Finished
+usee tv,"hashtags, links, retweets",On,2023-01-15 22:56:02,test-model-1_114234220,tweet_usee tv_test-model-1_114234220_2039_80.csv,5,Finished
+indihome,"hashtags, links, retweets",On,2023-01-16 07:23:19,test-model-1_114234220,tweet_indihome_test-model-1_114234220_2040_49.csv,100,Finished
+indihome lelet,"hashtags, links, retweets",On,2023-01-16 07:34:08,test-model-1_114234220,tweet_indihome lelet_test-model-1_114234220_2040_49.csv,38,Finished
